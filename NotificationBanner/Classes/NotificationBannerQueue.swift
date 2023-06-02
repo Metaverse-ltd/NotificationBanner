@@ -131,6 +131,10 @@ open class NotificationBannerQueue: NSObject {
     public func removeAll() {
         banners.removeAll()
     }
+    
+    public func dismissTopDisplayed() {
+        banners.first?.dismiss(forced: true)
+    }
 
     /**
      Forced dissmiss all notification banners from the queue
