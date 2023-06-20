@@ -96,6 +96,8 @@ open class FloatingNotificationBanner: GrowingNotificationBanner {
         on viewController: UIViewController? = nil,
         edgeInsets: UIEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8),
         cornerRadius: CGFloat? = nil,
+        enableBlurBackground: Bool = true,
+        blurStyle: UIBlurEffect.Style = .systemChromeMaterialDark,
         shadowColor: UIColor = .black,
         shadowOpacity: CGFloat = 1,
         shadowBlurRadius: CGFloat = 0,
@@ -105,12 +107,26 @@ open class FloatingNotificationBanner: GrowingNotificationBanner {
     ) {
 
         self.bannerEdgeInsets = edgeInsets
-        
+        spacerView.backgroundColor = .clear
         if let cornerRadius = cornerRadius {
             contentView.layer.cornerRadius = cornerRadius
             contentView.subviews.last?.layer.cornerRadius = cornerRadius
         }
         
+        if enableBlurBackground {
+            let blurBackground = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
+            blurBackground.isUserInteractionEnabled = false
+            insertSubview(blurBackground, at: 0)
+            blurBackground.layer.zPosition = -1
+            blurBackground.snp.makeConstraints { make in
+                make.edges.equalTo(contentView)
+            }
+            blurBackground.layer.cornerRadius = cornerRadius ?? 22
+            blurBackground.clipsToBounds = true
+            contentView.backgroundColor = nil
+            customView?.backgroundColor = .clear
+        }
+
         if style == .customView, let customView = contentView.subviews.last {
            customView.backgroundColor = customView.backgroundColor?.withAlphaComponent(transparency)
         }
